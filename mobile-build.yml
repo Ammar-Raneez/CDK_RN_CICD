@@ -1,0 +1,34 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto8
+      android: latest
+      nodejs: latest
+    commands:
+      - cd cicd && npm install -g react-native-cli
+      - npm install      
+  pre_build:
+    commands:
+      - echo Pre Build started on `date`
+      - react-native link
+      - cd android
+  build:
+    commands:
+      - echo Build started on `date`
+      - chmod +x gradlew
+      - ./gradlew clean
+      - ./gradlew assembleRelease
+  post_build:
+    commands:
+      - echo Build completed on `date`
+
+cache:
+  paths:
+    - cicd/node_modules/**/*
+
+artifacts:
+  files:
+    - cicd/android/app/build/outputs/apk/release/*.apk
+  discard-paths: yes

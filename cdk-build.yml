@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - cd cdk && npm install -g npm
+      - npm install
+  pre_build:
+    commands:
+      - echo Pre Build started on `date`
+  build:
+    commands:
+      - echo Build started on `date
+      - npm run build
+      - npm run cdk synth
+  post_build:
+    commands:
+      - echo Build completed on `date`   
+
+cache:
+  paths:
+    - cdk/node_modules/**/*
+
+artifacts:
+  base-directory: cdk/cdk.out
+  files:
+    - '**/*'
