@@ -2,20 +2,20 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
+    runtime-versions:    # Install required environments
       java: corretto8
       android: latest
       nodejs: latest
-    commands:
-      - cd cicd && npm install -g react-native-cli
-      - npm install      
+    commands:            # Install react native cli and node modules
+      - cd app && npm install -g react-native-cli
+      - npm install
   pre_build:
-    commands:
+    commands:            # Run pre-build process (linking)
       - echo Pre Build started on `date`
       - react-native link
       - cd android
   build:
-    commands:
+    commands:            # Build and cleanup
       - echo Build started on `date`
       - chmod +x gradlew
       - ./gradlew clean
@@ -26,9 +26,9 @@ phases:
 
 cache:
   paths:
-    - cicd/node_modules/**/*
+    - app/node_modules/**/*
 
 artifacts:
   files:
-    - cicd/android/app/build/outputs/apk/release/*.apk
+    - app/android/app/build/outputs/apk/release/*.apk
   discard-paths: yes

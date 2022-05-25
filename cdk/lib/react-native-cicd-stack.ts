@@ -29,15 +29,17 @@ export class ReactNativeCicdStack extends Stack {
     this.pipeline = new Pipeline(this, `Pipeline-${props.stageName}`, {
       pipelineName: `Pipeline-${props.stageName}`,
       crossAccountKeys: false,
-      restartExecutionOnUpdate: true,
+      restartExecutionOnUpdate: true,              // Restart pipeline on update
     });
 
+    // Add the source as the initial stage (Connection to repo)
     const sourceOutput = new Artifact(`source-output-${props.stageName}`);
 
+    // Add the source to the pipeline
     this.pipeline.addStage({
       stageName: `source-${props.stageName}`,
       actions: [
-        new CodeStarConnectionsSourceAction({
+        new CodeStarConnectionsSourceAction({      // connect via code star
           actionName: `Pipeline-Source-${props.stageName}`,
           owner: props.repo.owner,
           repo: props.repo.name,
@@ -48,7 +50,10 @@ export class ReactNativeCicdStack extends Stack {
       ],
     });
 
+    // Store our mobile build artifact
     this.uiBuildOutput = new Artifact(`UI-Build-Output-${props.stageName}`);
+
+    // Add our mobile build step
     this.pipeline.addStage({
       stageName: `UI-build-${props.stageName}`,
       actions: [
@@ -66,7 +71,10 @@ export class ReactNativeCicdStack extends Stack {
       ],
     });
 
+    // Store our CDK build artifact
     this.cdkBuildOutput = new Artifact(`CDK-build-output-${props.stageName}`);
+
+    // Add CDK build step
     this.pipeline.addStage({
       stageName: `CDK-build-${props.stageName}`,
       actions: [
@@ -85,6 +93,7 @@ export class ReactNativeCicdStack extends Stack {
       ],
     });
 
+    // Add cloud formation create/update step
     this.pipeline.addStage({
       stageName: `update-${props.stageName}`,
       actions: [
